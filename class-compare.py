@@ -35,7 +35,8 @@ def classCheck(data, propTrain, classifier, features, outcome, probout = True):
 ## features is a list of predictor variables
 ## outcome is the binary outcome variable of interest
 ## probout is logical and indicates if the probability of a 1 should be used as the prediction
-## This returns a data frame summarizing how the classifiers performed
+## This returns a data frame summarizing how the classifiers performed.
+## The values returned are the log loss values for each classifier across the nsamples replications.
 def simmer(data, nsamples, propTrain, classifier, features, outcome, probout = True):
     sd = dict()
     for i in range(0, nsamples):
