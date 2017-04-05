@@ -4,6 +4,7 @@
 
 import numpy, pandas
 from sklearn.metrics import log_loss
+import matplotlib.pyplot as plt
 
 ## The classCheck function is internal to the simmer function.
 def classCheck(data, propTrain, classifier, features, outcome, probout = True):
@@ -31,7 +32,7 @@ def classCheck(data, propTrain, classifier, features, outcome, probout = True):
 ## The data argument is a data frame with the features and outcome
 ## nsamples is the number of replications of spliting the data into training and test
 ## propTrain is the proportion of cases assigned to the training set
-## classifier is a single sklearn classifier, or a list of them (see the example below)
+## classifier is a list of sklearn classifiers (even a single classifier needs to be in a list)
 ## features is a list of predictor variables
 ## outcome is the binary outcome variable of interest
 ## probout is logical and indicates if the probability of a 1 should be used as the prediction
@@ -44,6 +45,16 @@ def simmer(data, nsamples, propTrain, classifier, features, outcome, probout = T
     output = pandas.concat(sd)
     output = output.reset_index(drop = True)
     return(output)
+
+
+## This function provides a quick glance at how the difference classifier compare
+def simmer_plot(x):
+    classes = x.columns
+    for c in classes:
+        plt.hist(x[c], alpha = .5)
+    plt.legend(classes)
+    plt.xlabel("log loss")
+    plt.show()
     
 ## Small example
 x = numpy.random.normal(size = 100)
@@ -57,4 +68,7 @@ from sklearn.linear_model import LogisticRegression
 
 classifier = [RandomForestClassifier(), BaggingClassifier(), LogisticRegression()]
     
-simmer(dat, 10, .6, classifier, ["x"], "y", probout = True)
+x = simmer(dat, 100, .6, classifier, ["x"], "y", probout = True)
+x
+
+simmer_plot(x)
