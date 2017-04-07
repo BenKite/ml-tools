@@ -10,8 +10,9 @@ The following packages are required:
 - sklearn
 - pandas
 - numpy
+- datetime
 
-class-compare.py:
+classcompare.py:
 Two functions that are used together to validate classifiers. These
 functions allow the user to specify multiple sklearn classifiers and
 evaluate them on the the same randomly sampled training and test
