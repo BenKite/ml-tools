@@ -4,17 +4,18 @@
 
 import numpy, pandas
 from sklearn.metrics import log_loss
+from sklearn.metrics import roc_auc_score
 import matplotlib.pyplot as plt
 from datetime import datetime
 
 ## The classCheck function is internal to the simmer function.
-def classCheck(data, propTrain, classifier, features, outcome, classNames = None, probout = True):
+def classCheck(data, propTrain, classifier, features, outcome, classNames = None, probout = True, useauc = True):
     ind = data.index.values
     size = int(numpy.round(len(ind)*propTrain))
     use = numpy.random.choice(ind, size, replace = False)
     train = data.loc[use]
     test = data.loc[set(ind) - set(use)]
-    logloss = []
+    classmeas = []
     if classNames == None:
         names = []
     for c in classifier:
@@ -25,15 +26,18 @@ def classCheck(data, propTrain, classifier, features, outcome, classNames = None
             test["prediction"] = trained.predict_proba(test[features])[:,1]
         else:
             test["prediction"] = trained.predict(test[features])
-        ll = log_loss(test[outcome], test["prediction"])
-        logloss.append(ll)
-    logloss = pandas.DataFrame(logloss)
-    logloss = logloss.transpose()
+        if useauc:
+            out = roc_auc_score(test[outcome], test["prediction"])
+        else:
+            out = log_loss(test[outcome], test["prediction"])
+        classmeas.append(out)
+    classmeas = pandas.DataFrame(classmeas)
+    classmeas = classmeas.transpose()
     if classNames == None:
-        logloss.columns = names
+        classmeas.columns = names
     else:
-        logloss.columns = classNames
-    return(logloss)
+        classmeas.columns = classNames
+    return(classmeas)
 
 ## The data argument is a data frame with the features and outcome
 ## nsamples is the number of replications of spliting the data into training and test
@@ -46,11 +50,11 @@ def classCheck(data, propTrain, classifier, features, outcome, classNames = None
 ## probout is logical and indicates if the probability of a 1 should be used as the prediction
 ## This returns a data frame summarizing how the classifiers performed.
 ## The values returned are the log loss values for each classifier across the nsamples replications.
-def simmer(data, classifier, features, outcome, nsamples = 100, propTrain = .8, classNames = None, maxTime = 1440, probout = True):
+def simmer(data, classifier, features, outcome, nsamples = 100, propTrain = .8, classNames = None, maxTime = 1440, probout = True, useauc = True):
     tstart = datetime.now()
     sd = dict()
     for i in range(0, nsamples):
-        sd[i] = classCheck(data, propTrain, classifier, features, outcome, classNames, probout)
+        sd[i] = classCheck(data, propTrain, classifier, features, outcome, classNames, probout, useauc)
         if (datetime.now() - tstart).seconds/60 > maxTime:
             print("Stopped at " + str(i + 1) + " replications to keep things under " + str(maxTime) + " minutes")
             break
@@ -65,7 +69,7 @@ def simmer_plot(x):
     for c in classes:
         plt.hist(x[c], alpha = .5)
     plt.legend(classes)
-    plt.xlabel("log loss")
+    plt.xlabel("classification measure")
     plt.show()
     
 ## Small example
