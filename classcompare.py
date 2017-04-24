@@ -60,16 +60,23 @@ def simmer(data, classifier, features, outcome, nsamples = 100, propTrain = .8, 
             break
     output = pandas.concat(sd)
     output = output.reset_index(drop = True)
-    return(output)
+    if useauc:
+        fitmeas = "AUC"
+    else:
+        fitmeas = "logLoss"
+    return(output, fitmeas)
 
 
 ## This function provides a quick glance at how the difference classifier compare
-def simmer_plot(x):
-    classes = x.columns
+def simmer_plot(x, aucmin = .5):
+    dat = x[0]
+    classes = dat.columns
     for c in classes:
-        plt.hist(x[c], alpha = .5)
+        plt.hist(dat[c], alpha = .5)
     plt.legend(classes)
-    plt.xlabel("classification measure")
+    if x[1] == "AUC":
+        plt.xlim(aucmin,1)
+    plt.xlabel(x[1])
     plt.show()
     
 ## Small example
