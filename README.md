@@ -21,3 +21,9 @@ function is what runs the check repeatedly. This allows the user to
 determine how log loss varies due to sampling variability. This
 provides an idea of how classifiers should be expected to
 compare in the future.
+
+regcompare.py:
+Functions used to compare competing regression models. Like the
+aforementioned classcompare script, repeated validations are done on
+training and test data. Currently the only metric for fit is
+R-squared.
