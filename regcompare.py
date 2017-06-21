@@ -45,14 +45,12 @@ def regCheck(data, propTrain, models, features, outcome, regNames = None):
 ## The data argument is a data frame with the features and outcome
 ## nsamples is the number of replications of spliting the data into training and test
 ## propTrain is the proportion of cases assigned to the training set
-## classifier is a list of sklearn classifiers (even a single classifier needs to be in a list)
+## models is a list of sklearn regressors (even a single classifier needs to be in a list)
 ## features is a list of predictor variables
-## outcome is the binary outcome variable of interest
-## classNames allows the user to specific names for the classifiers to display in the output. This was included incase the same classifier (with varying options) is used multiple times. Defaults to None, which uses the names of the classifiers in sklearn.
+## outcome is the continuous outcome of interest
+## regNames allows the user to specific names for the models to display in the output.
 ## maxTime is the maximum number of minutes the function should be allowed to run
-## probout is logical and indicates if the probability of a 1 should be used as the prediction
-## This returns a data frame summarizing how the classifiers performed.
-## The values returned are the log loss values for each classifier across the nsamples replications.
+## This returns a data frame summarizing how the models performed.
 def simmer(data, models, features, outcome, nsamples = 100, propTrain = .8, regNames = None, maxTime = 1440):
     tstart = datetime.now()
     sd = dict()
