@@ -26,4 +26,6 @@ regcompare.py:
 Functions used to compare competing regression models. Like the
 aforementioned classcompare script, repeated validations are done on
 training and test data. Currently the only metric for fit is
-R-squared.
+R-squared. This script also contains a function for iterating across
+different parameter values for a model and determining how test
+accuracy changes as a results.
