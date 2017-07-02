@@ -114,11 +114,37 @@ def simmer_plot(x):
 def paramTester(param, model, values, features, outcome, data, nsamples = 100, propTrain = .5, maxTime = 10):
     models = []
     names = []
+    length = len(param)
     for v in values:
-        models.append(eval(model + "(" + param + "=" + str(v) + ")"))
-        names.append(param + " = " + str(v))
+        tmp = param[0] + " = " +  str(v[0])
+        for i in range(1, length):
+            tmp = tmp + ", " + (param[i] + " = " +  str(v[i]))
+        models.append(eval(model + "(" + tmp + ")"))
+        names.append(str(param) + " = " + str(v))
     out = simmer(data, models, features, outcome, nsamples, propTrain, regNames = names, maxTime = maxTime)
     return(out)
-  
-## This is an example of its use.
-paramTester("alpha", "Lasso", [.5, .1, .01]) 
+## Quick example
+
+##ds = [2]
+##es = [45, 50, 55, 60, 65, 70]
+
+##values = []
+##for d in ds:
+##    for e in es:
+##        values.append([d, e])
+
+##model = "GradientBoostingRegressor"
+##param = ["max_depth", "n_estimators"]
+
+##output = paramTester(param, model, values, preds, "y", train, propTrain = .90, maxTime = .5)
+##output
+
+
+## This takes the return of paramTester and summarizes the performances of the models.
+
+## I will add criterion options soon.
+def modelSelect(output, criterion = "mean"):
+    out = output.mean()
+    out.sort(ascending = False)
+    return(out)
+
